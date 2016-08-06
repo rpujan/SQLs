@@ -1,0 +1,21 @@
+DECLARE @Trans TABLE (Account_ID [int] NULL,Account_Name VARCHAR(10), Year_Quarter VARCHAR(8))
+INSERT INTO @Trans(Account_ID, Account_Name) SELECT 1, 'COGS' UNION ALL SELECT 2, 'Sales'
+---------------------------------
+DECLARE @Quarter TABLE(QNAME VARCHAR(2))
+INSERT INTO @Quarter VALUES('Q1')
+INSERT INTO @Quarter VALUES('Q2')
+INSERT INTO @Quarter VALUES('Q3')
+INSERT INTO @Quarter VALUES('Q4')
+-------------------------------------
+DECLARE @TEMP TABLE (Account_ID [int] NULL,Account_Name VARCHAR(10), Year_Quarter VARCHAR(8))
+DECLARE @YEAR INT
+SET @YEAR = 2011
+WHILE @YEAR <= 2013
+BEGIN
+	INSERT INTO @TEMP
+	SELECT B.Account_ID,B.Account_Name,A.YEAR_QUARTER FROM (
+		SELECT CAST(YEAR AS VARCHAR) + QNAME AS YEAR_QUARTER FROM (SELECT @YEAR AS [YEAR]) X CROSS JOIN @Quarter Y
+	) A CROSS JOIN @Trans B
+	SET @YEAR=@YEAR+1
+END
+SELECT * FROM @TEMP ORDER BY Account_ID
